@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registrasi Trip — Travelmates Indonesia</title>
+<meta name="description" content="Pendaftaran Trip Adventure — Trekking, Canyoning, Rope Jumping, Rafting bersama Travelmates Indonesia.">
+<meta name="theme-color" content="#F26B1D">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --or:#F26B1D; --am:#F7A21B; --ye:#FFC93C; --br:#6B2A06; --cr:#FFF8EC;
+    --ink:#3B2414; --muted:#8A6B55; --line:#F1DFC8; --err:#DC2626; --ok:#16A34A;
+    --card:#FFFFFF; --bg:#FFF4E4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:Poppins,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+  button,input,select,textarea{font:inherit;color:inherit}
+  .wrap{max-width:560px;margin:0 auto;padding:0 16px 40px}
+
+  /* Header */
+  header{background:linear-gradient(160deg,var(--or),var(--am) 70%,var(--ye));color:#fff;padding:28px 16px 64px;text-align:center;position:relative;overflow:hidden}
+  header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:34px;background:var(--bg);
+    clip-path:polygon(0 60%,6% 35%,12% 55%,18% 30%,25% 58%,32% 28%,40% 55%,47% 32%,55% 60%,62% 30%,70% 52%,77% 28%,85% 56%,92% 34%,100% 58%,100% 100%,0 100%)}
+  .logo-pill{display:inline-block;background:#fff;border-radius:18px;padding:10px 16px;box-shadow:0 6px 0 rgba(107,42,6,.25)}
+  .logo-pill img{height:52px;display:block}
+  .slot{display:inline-block;margin-top:16px;background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.6);border-radius:999px;padding:4px 14px;font-size:12px;font-weight:600}
+  header h1{font-family:Fredoka;font-weight:700;font-size:30px;line-height:1.1;margin-top:10px;text-shadow:0 3px 0 rgba(107,42,6,.45)}
+  header p{margin-top:8px;font-size:14px;opacity:.95}
+
+  /* Cards */
+  .card{background:var(--card);border-radius:20px;padding:18px;margin-top:16px;box-shadow:0 4px 0 var(--line),0 8px 24px rgba(107,42,6,.06);border:1px solid var(--line)}
+  .wrap > .card:first-child{margin-top:-40px;position:relative}
+  .card h2{font-family:Fredoka;font-weight:700;font-size:19px;color:var(--br);display:flex;align-items:center;gap:8px;margin-bottom:14px}
+  .card h2 .n{width:26px;height:26px;border-radius:50%;background:linear-gradient(180deg,var(--am),var(--or));color:#fff;font-size:14px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .field{margin-bottom:14px}
+  .field:last-child{margin-bottom:0}
+  label.l{display:block;font-weight:600;font-size:13.5px;margin-bottom:6px}
+  label.l i{color:var(--err);font-style:normal}
+  .hint{font-size:12px;color:var(--muted);margin-top:4px}
+  input[type=text],input[type=tel],input[type=number],input[type=date],select,textarea{
+    width:100%;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:#fff;outline:none;transition:.15s;min-height:48px}
+  textarea{min-height:84px;resize:vertical}
+  input:focus,select:focus,textarea:focus{border-color:var(--or);box-shadow:0 0 0 3px rgba(242,107,29,.18)}
+  .invalid input,.invalid select,.invalid textarea,input.invalid,select.invalid{border-color:var(--err)}
+  .err{color:var(--err);font-size:12px;margin-top:4px;display:none}
+  .invalid > .err,.err.show{display:block}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  /* Activity choice */
+  .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .act{position:relative;border:2px solid var(--line);border-radius:16px;background:#fff;padding:14px 10px;text-align:center;cursor:pointer;transition:.15s;min-height:96px}
+  .act .e{font-size:30px;line-height:1}
+  .act .t{font-family:Fredoka;font-weight:700;font-size:16px;margin-top:6px;color:var(--br)}
+  .act .b{font-size:10.5px;font-weight:700;color:#C2410C;margin-top:2px}
+  .act[aria-pressed=true]{border-color:var(--or);background:#FFF1E2;box-shadow:0 4px 0 var(--or)}
+  .opts{display:grid;gap:8px;margin-top:4px}
+  .opt{display:flex;justify-content:space-between;align-items:center;gap:10px;border:2px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;cursor:pointer;text-align:left;width:100%;min-height:48px}
+  .opt[aria-pressed=true]{border-color:var(--or);background:#FFF1E2}
+  .opt .p{font-family:Fredoka;font-weight:700;color:var(--or);white-space:nowrap}
+  .sub-title{font-weight:600;font-size:13.5px;margin:14px 0 6px}
+
+  /* Stepper */
+  .stepper{display:flex;align-items:center;gap:10px}
+  .stepper button{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:#fff;font-size:22px;font-weight:700;color:var(--or);cursor:pointer}
+  .stepper button:disabled{opacity:.35;cursor:not-allowed}
+  .stepper output{min-width:34px;text-align:center;font-family:Fredoka;font-weight:700;font-size:20px}
+  .addon{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1.5px dashed var(--line)}
+  .addon:last-child{border-bottom:0}
+  .addon small{display:block;color:var(--muted)}
+
+  .peserta{border:1.5px dashed var(--am);border-radius:16px;padding:14px;margin-top:12px;background:#FFFBF5}
+  .peserta h3{font-size:14px;font-weight:700;color:var(--br);margin-bottom:10px}
+
+  /* Summary */
+  .sum .row{display:flex;justify-content:space-between;padding:6px 0;font-size:14px}
+  .sum .row span:last-child{font-weight:600}
+  .sum .total{border-top:2px dashed var(--line);margin-top:6px;padding-top:10px;font-size:16px}
+  .sum .total span:last-child{font-family:Fredoka;font-size:22px;color:var(--or)}
+  .sum .dp{background:#FFF1E2;border-radius:12px;padding:10px 12px;margin-top:8px}
+  .sum .dp span:last-child{font-family:Fredoka;font-size:18px;color:var(--br)}
+
+  /* Bank */
+  .bank{background:linear-gradient(140deg,var(--br),#9A3F0B);color:#fff;border-radius:16px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .bank .no{font-family:Fredoka;font-size:24px;letter-spacing:1px}
+  .bank small{opacity:.85}
+  .bank button{background:var(--ye);color:var(--br);border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;min-height:44px}
+  ul.rules{list-style:none;margin:12px 0 0;display:grid;gap:6px;font-size:13px}
+
+  /* Upload */
+  .drop{border:2px dashed var(--am);border-radius:16px;padding:18px;text-align:center;background:#FFFBF5;cursor:pointer;display:block}
+  .drop .e{font-size:30px}
+  .drop b{display:block;margin-top:4px}
+  .drop small{color:var(--muted)}
+  .drop input{position:absolute;width:1px;height:1px;opacity:0}
+  .preview{display:none;align-items:center;gap:12px;margin-top:10px;border:1.5px solid var(--line);border-radius:14px;padding:10px}
+  .preview.show{display:flex}
+  .preview img{width:64px;height:64px;object-fit:cover;border-radius:10px;background:var(--cr)}
+  .preview .pdf{width:64px;height:64px;border-radius:10px;background:var(--cr);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--err)}
+  .preview .info{flex:1;min-width:0;font-size:13px}
+  .preview .info b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .preview button{border:0;background:none;color:var(--err);font-weight:700;cursor:pointer;padding:8px}
+
+  .check{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer}
+  .check input{width:22px;height:22px;accent-color:var(--or);flex:none;margin-top:1px}
+
+  .submit{width:100%;margin-top:18px;border:0;border-radius:16px;padding:16px;font-family:Fredoka;font-weight:700;font-size:19px;color:#fff;cursor:pointer;
+    background:linear-gradient(180deg,var(--am),var(--or));box-shadow:0 5px 0 var(--br);min-height:56px}
+  .submit:disabled{opacity:.7;cursor:wait}
+  .note{text-align:center;font-size:12.5px;color:var(--muted);margin-top:10px}
+  .alert{display:none;margin-top:14px;border-radius:14px;padding:12px 14px;font-size:13.5px;background:#FEE2E2;color:#7F1D1D;border:1.5px solid #FCA5A5}
+  .alert.show{display:block}
+  .alert a{color:#7F1D1D;font-weight:700}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+  /* Success */
+  #success{display:none}
+  #success.show{display:block}
+  .done{text-align:center}
+  .done .big{font-size:56px}
+  .done h2{justify-content:center;font-size:24px}
+  .done .id{display:inline-block;font-family:Fredoka;font-size:22px;background:var(--cr);border:2px dashed var(--or);border-radius:12px;padding:6px 16px;margin:8px 0 14px;color:var(--br)}
+  .wa-btn{display:block;text-decoration:none;text-align:center;background:#25D366;color:#fff;border-radius:16px;padding:16px;font-weight:700;font-size:17px;box-shadow:0 5px 0 #128C4A;margin-top:14px}
+
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:26px}
+  footer b{color:var(--or)}
+
+  /* Loading overlay */
+  .overlay{position:fixed;inset:0;background:rgba(59,36,20,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .overlay.show{display:flex}
+  .overlay .box{background:#fff;border-radius:20px;padding:24px;text-align:center;max-width:320px;width:100%}
+  .spin{width:44px;height:44px;border-radius:50%;border:5px solid var(--line);border-top-color:var(--or);margin:0 auto 12px;animation:sp 1s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-pill"><img src="logo.png" alt="Travelmates Indonesia"></div><br>
+  <span class="slot">🏕️ Slot Terbatas Setiap Trip</span>
+  <h1>Registrasi Trip Adventure</h1>
+  <p>Satu trip, banyak pilihan petualangan — pilih level serumu! 🌿🔥</p>
+</header>
+
+<main class="wrap">
+  <form id="form" novalidate>
+    <!-- 1. Data pendaftar -->
+    <section class="card">
+      <h2><span class="n">1</span>Data Pendaftar</h2>
+      <div class="field" data-f="namaLengkap"><label class="l" for="namaLengkap">Nama Lengkap <i>*</i></label>
+        <input type="text" id="namaLengkap" autocomplete="name" placeholder="Sesuai KTP"><div class="err"></div></div>
+      <div class="field" data-f="noWA"><label class="l" for="noWA">Nomor WhatsApp Aktif <i>*</i></label>
+        <input type="tel" id="noWA" inputmode="tel" autocomplete="tel" placeholder="08123456789"><div class="err"></div></div>
+      <div class="grid2">
+        <div class="field" data-f="jenisKelamin"><label class="l" for="jenisKelamin">Jenis Kelamin <i>*</i></label>
+          <select id="jenisKelamin"><option value="">Pilih</option><option>Laki-laki</option><option>Perempuan</option></select><div class="err"></div></div>
+        <div class="field" data-f="usia"><label class="l" for="usia">Usia <i>*</i></label>
+          <input type="number" id="usia" inputmode="numeric" min="5" max="80" placeholder="Tahun"><div class="err"></div></div>
+      </div>
+    </section>
+
+    <!-- 2. Kontak darurat -->
+    <section class="card">
+      <h2><span class="n">2</span>Kontak Darurat</h2>
+      <div class="field" data-f="namaDarurat"><label class="l" for="namaDarurat">Nama Kontak Darurat <i>*</i></label>
+        <input type="text" id="namaDarurat" placeholder="Orang tua / saudara / teman"><div class="err"></div></div>
+      <div class="field" data-f="noWADarurat"><label class="l" for="noWADarurat">Nomor WA Kontak Darurat <i>*</i></label>
+        <input type="tel" id="noWADarurat" inputmode="tel" placeholder="08123456789"><div class="err"></div></div>
+    </section>
+
+    <!-- 3. Aktivitas -->
+    <section class="card">
+      <h2><span class="n">3</span>Pilih Aktivitas</h2>
+      <div class="field" data-f="aktivitas"><div class="acts" id="acts"></div><div class="err"></div></div>
+      <div id="subWrap" hidden>
+        <div class="field" data-f="subIdx"><div class="sub-title">Lokasi</div><div class="opts" id="subs"></div><div class="err"></div></div>
+        <div class="field" data-f="mpIdx"><div class="sub-title">Meeting Point</div><div class="opts" id="mps"></div><div class="err"></div></div>
+      </div>
+    </section>
+
+    <!-- 4. Peserta & tanggal -->
+    <section class="card">
+      <h2><span class="n">4</span>Peserta &amp; Tanggal</h2>
+      <div class="field"><label class="l">Jumlah Peserta <i>*</i></label>
+        <div class="stepper"><button type="button" id="pMinus" aria-label="Kurangi peserta">−</button><output id="pCount">1</output><button type="button" id="pPlus" aria-label="Tambah peserta">+</button><span>orang</span></div>
+        <div class="hint">Termasuk kamu sendiri.</div></div>
+      <div id="pesertaList"></div>
+      <div class="field" data-f="tanggalTrip" style="margin-top:14px"><label class="l" for="tanggalTrip">Tanggal Trip <i>*</i></label>
+        <input type="date" id="tanggalTrip"><div class="err"></div></div>
+      <div class="field"><label class="l" for="catatanKesehatan">Catatan Kesehatan (opsional)</label>
+        <textarea id="catatanKesehatan" placeholder="Kondisi kesehatan / alergi / catatan penting"></textarea></div>
+    </section>
+
+    <!-- 5. Add-ons -->
+    <section class="card">
+      <h2><span class="n">5</span>Add-ons (opsional)</h2>
+      <div id="addons"></div>
+    </section>
+
+    <!-- 6. Ringkasan -->
+    <section class="card sum">
+      <h2><span class="n">6</span>Ringkasan Harga</h2>
+      <div class="row"><span>Harga per orang</span><span id="sHarga">—</span></div>
+      <div class="row"><span>Jumlah peserta</span><span id="sJumlah">1 orang</span></div>
+      <div class="row"><span>Total aktivitas</span><span id="sAkt">—</span></div>
+      <div class="row"><span>Add-ons</span><span id="sAdd">Rp0</span></div>
+      <div class="row total"><span>Total Harga</span><span id="sTotal">—</span></div>
+      <div class="row dp"><span id="sDpLabel">DP Minimal</span><span id="sDp">—</span></div>
+    </section>
+
+    <!-- 7. Pembayaran -->
+    <section class="card">
+      <h2><span class="n">7</span>Pembayaran</h2>
+      <div class="bank"><div><small id="bankName"></small><div class="no" id="bankNo"></div><small id="bankAn"></small></div><button type="button" id="copyBtn">Salin</button></div>
+      <ul class="rules" id="rules"></ul>
+      <div class="field" data-f="namaPengirim" style="margin-top:14px"><label class="l" for="namaPengirim">Nama Pengirim Transfer <i>*</i></label>
+        <input type="text" id="namaPengirim" placeholder="Nama di rekening pengirim"><div class="err"></div></div>
+      <div class="field" data-f="bukti"><label class="l">Upload Bukti Transfer <i>*</i></label>
+        <label class="drop" id="drop"><span class="e">📤</span><b>Tap untuk upload bukti transfer</b><small>JPG, PNG, atau PDF</small>
+          <input type="file" id="bukti" accept="image/*,application/pdf"></label>
+        <div class="preview" id="preview"><div id="thumb"></div><div class="info"><b id="fName"></b><span id="fSize"></span></div><button type="button" id="fRemove">Hapus</button></div>
+        <div class="err"></div></div>
+    </section>
+
+    <!-- 8. Persetujuan -->
+    <section class="card">
+      <h2><span class="n">8</span>Persetujuan</h2>
+      <div class="field" data-f="setuju"><label class="check"><input type="checkbox" id="setuju"><span>Saya dalam kondisi sehat &amp; menyetujui S&amp;K (DP hangus jika cancel).</span></label><div class="err"></div></div>
+      <div class="hp" aria-hidden="true"><label>Website <input type="text" id="website" tabindex="-1" autocomplete="off"></label></div>
+      <button type="submit" class="submit" id="submitBtn">Kirim Pendaftaran 🚀</button>
+      <div class="alert" id="alert"></div>
+      <p class="note">Data &amp; bukti transfer tersimpan otomatis, lalu kamu bisa konfirmasi ke WhatsApp admin.</p>
+    </section>
+  </form>
+
+  <!-- Sukses -->
+  <section id="success" class="card done">
+    <div class="big">🎉</div>
+    <h2>Pendaftaran Terkirim!</h2>
+    <p>Data dan bukti transfer kamu sudah kami terima.</p>
+    <div class="id" id="regId"></div>
+    <p>Tap tombol di bawah untuk konfirmasi ke admin, ya.</p>
+    <a class="wa-btn" id="waBtn" href="#" target="_blank" rel="noopener">💬 Konfirmasi ke WhatsApp Admin</a>
+    <p class="note">Simpan ID registrasi untuk cek status pembayaran.</p>
+  </section>
+
+  <footer>
+    <p>Follow kami di Instagram &amp; TikTok <b>@travelmates.idn</b></p>
+    <p>© 2026 Travelmates Indonesia · Explore More, Together.</p>
+  </footer>
+</main>
+
+<div class="overlay" id="overlay"><div class="box"><div class="spin"></div><b id="loadTitle">Mengirim pendaftaran…</b><p class="hint" id="loadText">Jangan tutup halaman ini.</p></div></div>
+
+<script src="config.js"></script>
+<script src="logic.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
