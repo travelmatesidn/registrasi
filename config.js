@@ -1,6 +1,6 @@
 /* =========================================================
    KONFIGURASI FORM REGISTRASI — Travelmates Indonesia
-   Edit file ini saja untuk ganti harga, trip, rekening, dll.
+   Edit file ini saja untuk ganti trip, jadwal, harga, rekening, dll.
    ========================================================= */
 window.TM_CONFIG = {
   // URL Web App dari Google Apps Script (lihat PANDUAN_SETUP.md langkah 3)
@@ -9,48 +9,46 @@ window.TM_CONFIG = {
   // Nomor WhatsApp admin (format 62..., tanpa + dan tanpa spasi)
   WA_ADMIN: '6282125445322',
 
-  BANK: { nomor: '8720600511', bank: 'BCA', atasNama: 'Haidar Akmaludin' },
+  BANK: { nomor: '0909 010000 35562', bank: 'BRI', atasNama: 'PT TRAVELMATES INDONESIA GRUP' },
 
   DP_PERSEN: 50,
 
-  ADDONS: [
-    { key: 'trekkingPole', label: '🥾 Trekking Pole', harga: 15000, satuan: 'pcs' },
-    { key: 'drone', label: '🚁 Drone', harga: 120000, satuan: 'unit' },
-  ],
-
-  // Daftar aktivitas. "harga" urutannya sama dengan "meetingPoints".
+  /* Daftar trip — Open Trip Desember 2026
+     - meetingPoints & harga: urutannya sama (harga[0] = meetingPoints[0], dst.)
+     - jadwal: tanggal trip (YYYY-MM-DD). Tanggal yang sudah lewat otomatis disembunyikan. */
   AKTIVITAS: [
     {
-      key: 'trekking', label: 'Trekking', emoji: '🌿', badge: null,
+      key: 'canyoning-sentul', label: 'Canyoning Sentul', emoji: '🧗', badge: '🔥 Paling diminati',
+      meetingPoints: ['Basecamp', 'UKI', 'Hotel Ambarossa Bekasi', 'Stasiun Bogor'],
+      harga: [295000, 420000, 420000, 395000],
+      jadwal: ['2026-12-02', '2026-12-05', '2026-12-06', '2026-12-09', '2026-12-12', '2026-12-13', '2026-12-16',
+               '2026-12-19', '2026-12-20', '2026-12-23', '2026-12-26', '2026-12-27', '2026-12-30'],
+    },
+    {
+      key: 'gunung-papandayan', label: 'Gunung Papandayan', emoji: '⛰️', badge: null,
+      meetingPoints: ['Basecamp', 'UKI', 'Hotel Ambarossa Bekasi', 'Stasiun Bogor'],
+      harga: [200000, 365000, 365000, 365000],
+      jadwal: ['2026-12-05', '2026-12-06', '2026-12-19', '2026-12-20', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-27'],
+    },
+    {
+      key: 'rafting-cisadane', label: 'Rafting Cisadane', emoji: '🚣', badge: null,
       meetingPoints: ['Basecamp', 'Stasiun Bogor'],
-      sub: [
-        { nama: 'Curug Cisadane', harga: [150000, 275000] },
-        { nama: 'Curug Cibeureum', harga: [150000, 275000] },
-      ],
+      harga: [250000, 280000],
+      jadwal: ['2026-12-05', '2026-12-06', '2026-12-10', '2026-12-12', '2026-12-13', '2026-12-17', '2026-12-19',
+               '2026-12-20', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-27'],
+      catatan: 'Ada Open Trip Spesial Liburan selama libur sekolah — tanggal lain tanya admin.',
     },
     {
-      key: 'canyoning', label: 'Canyoning', emoji: '🧗', badge: '🔥 Paling diminati',
-      meetingPoints: ['Lokasi', 'Stasiun Bogor'],
-      sub: [
-        { nama: 'Curug Bungsu, TNGHS (27m)', harga: [290000, 390000] },
-        { nama: 'Curug Cileuksa, Sukajaya (48m)', harga: [290000, 390000] },
-        { nama: 'Curug Cibingbin Sentul (24m)', harga: [295000, 395000] },
-      ],
+      key: 'trekking-cisadon', label: 'Trekking Cisadon', emoji: '🥾', badge: null,
+      meetingPoints: ['Stasiun Bogor'],
+      harga: [125000],
+      jadwal: ['2026-12-12', '2026-12-13', '2026-12-19', '2026-12-20', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-27'],
     },
     {
-      key: 'ropeJumping', label: 'Rope Jumping', emoji: '🌉', badge: '🔥 Paling diminati',
-      meetingPoints: ['Lokasi', 'Stasiun Bogor'],
-      sub: [
-        { nama: 'Jembatan Cidokom, Bogor (25m)', harga: [290000, 390000] },
-        { nama: 'Curug Ngumpet, TNGHS (21m)', harga: [290000, 390000] },
-      ],
-    },
-    {
-      key: 'rafting', label: 'Rafting', emoji: '🌊', badge: null,
-      meetingPoints: ['Lokasi', 'Stasiun Bogor'],
-      sub: [
-        { nama: 'Cisadane (12km)', harga: [250000, 280000] },
-      ],
+      key: 'curug-cibeureum', label: 'Trekking Curug Cibeureum', emoji: '💦', badge: null,
+      meetingPoints: ['Basecamp', 'Stasiun Bogor'],
+      harga: [155000, 270000],
+      jadwal: ['2026-12-12', '2026-12-13', '2026-12-19', '2026-12-20', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-27'],
     },
   ],
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Registrasi Trip — Travelmates Indonesia</title>
-<meta name="description" content="Pendaftaran Trip Adventure — Trekking, Canyoning, Rope Jumping, Rafting bersama Travelmates Indonesia.">
+<meta name="description" content="Pendaftaran Open Trip Travelmates Indonesia — Canyoning Sentul, Gunung Papandayan, Rafting Cisadane, Trekking Cisadon & Curug Cibeureum.">
 <meta name="theme-color" content="#F26B1D">
 <link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,7 +85,8 @@
 
   /* Bank */
   .bank{background:linear-gradient(140deg,var(--br),#9A3F0B);color:#fff;border-radius:16px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-  .bank .no{font-family:Fredoka;font-size:24px;letter-spacing:1px}
+  .bank .no{font-family:Fredoka;font-size:23px;letter-spacing:.5px}
+  .bank small{display:block}
   .bank small{opacity:.85}
   .bank button{background:var(--ye);color:var(--br);border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;min-height:44px}
   ul.rules{list-style:none;margin:12px 0 0;display:grid;gap:6px;font-size:13px}
@@ -140,8 +141,8 @@
 <header>
   <div class="logo-pill"><img src="logo.png" alt="Travelmates Indonesia"></div><br>
   <span class="slot">🏕️ Slot Terbatas Setiap Trip</span>
-  <h1>Registrasi Trip Adventure</h1>
-  <p>Satu trip, banyak pilihan petualangan — pilih level serumu! 🌿🔥</p>
+  <h1>Registrasi Open Trip</h1>
+  <p>Desember 2026 · Canyoning, Hiking, Rafting &amp; Trekking 🌿🔥</p>
 </header>
 
 <main class="wrap">
@@ -170,49 +171,41 @@
         <input type="tel" id="noWADarurat" inputmode="tel" placeholder="08123456789"><div class="err"></div></div>
     </section>
 
-    <!-- 3. Aktivitas -->
+    <!-- 3. Trip -->
     <section class="card">
-      <h2><span class="n">3</span>Pilih Aktivitas</h2>
+      <h2><span class="n">3</span>Pilih Trip</h2>
       <div class="field" data-f="aktivitas"><div class="acts" id="acts"></div><div class="err"></div></div>
       <div id="subWrap" hidden>
-        <div class="field" data-f="subIdx"><div class="sub-title">Lokasi</div><div class="opts" id="subs"></div><div class="err"></div></div>
         <div class="field" data-f="mpIdx"><div class="sub-title">Meeting Point</div><div class="opts" id="mps"></div><div class="err"></div></div>
+        <div class="field" data-f="tanggalTrip"><label class="l" for="tanggalTrip">Tanggal Trip <i>*</i></label>
+          <select id="tanggalTrip"><option value="">Pilih tanggal</option></select>
+          <div class="hint" id="tripNote"></div><div class="err"></div></div>
       </div>
     </section>
 
     <!-- 4. Peserta & tanggal -->
     <section class="card">
-      <h2><span class="n">4</span>Peserta &amp; Tanggal</h2>
+      <h2><span class="n">4</span>Peserta</h2>
       <div class="field"><label class="l">Jumlah Peserta <i>*</i></label>
         <div class="stepper"><button type="button" id="pMinus" aria-label="Kurangi peserta">−</button><output id="pCount">1</output><button type="button" id="pPlus" aria-label="Tambah peserta">+</button><span>orang</span></div>
         <div class="hint">Termasuk kamu sendiri.</div></div>
       <div id="pesertaList"></div>
-      <div class="field" data-f="tanggalTrip" style="margin-top:14px"><label class="l" for="tanggalTrip">Tanggal Trip <i>*</i></label>
-        <input type="date" id="tanggalTrip"><div class="err"></div></div>
-      <div class="field"><label class="l" for="catatanKesehatan">Catatan Kesehatan (opsional)</label>
+      <div class="field" style="margin-top:14px"><label class="l" for="catatanKesehatan">Catatan Kesehatan (opsional)</label>
         <textarea id="catatanKesehatan" placeholder="Kondisi kesehatan / alergi / catatan penting"></textarea></div>
     </section>
 
-    <!-- 5. Add-ons -->
-    <section class="card">
-      <h2><span class="n">5</span>Add-ons (opsional)</h2>
-      <div id="addons"></div>
-    </section>
-
-    <!-- 6. Ringkasan -->
+    <!-- 5. Ringkasan -->
     <section class="card sum">
-      <h2><span class="n">6</span>Ringkasan Harga</h2>
+      <h2><span class="n">5</span>Ringkasan Harga</h2>
       <div class="row"><span>Harga per orang</span><span id="sHarga">—</span></div>
       <div class="row"><span>Jumlah peserta</span><span id="sJumlah">1 orang</span></div>
-      <div class="row"><span>Total aktivitas</span><span id="sAkt">—</span></div>
-      <div class="row"><span>Add-ons</span><span id="sAdd">Rp0</span></div>
       <div class="row total"><span>Total Harga</span><span id="sTotal">—</span></div>
       <div class="row dp"><span id="sDpLabel">DP Minimal</span><span id="sDp">—</span></div>
     </section>
 
-    <!-- 7. Pembayaran -->
+    <!-- 6. Pembayaran -->
     <section class="card">
-      <h2><span class="n">7</span>Pembayaran</h2>
+      <h2><span class="n">6</span>Pembayaran</h2>
       <div class="bank"><div><small id="bankName"></small><div class="no" id="bankNo"></div><small id="bankAn"></small></div><button type="button" id="copyBtn">Salin</button></div>
       <ul class="rules" id="rules"></ul>
       <div class="field" data-f="namaPengirim" style="margin-top:14px"><label class="l" for="namaPengirim">Nama Pengirim Transfer <i>*</i></label>
@@ -224,9 +217,9 @@
         <div class="err"></div></div>
     </section>
 
-    <!-- 8. Persetujuan -->
+    <!-- 7. Persetujuan -->
     <section class="card">
-      <h2><span class="n">8</span>Persetujuan</h2>
+      <h2><span class="n">7</span>Persetujuan</h2>
       <div class="field" data-f="setuju"><label class="check"><input type="checkbox" id="setuju"><span>Saya dalam kondisi sehat &amp; menyetujui S&amp;K (DP hangus jika cancel).</span></label><div class="err"></div></div>
       <div class="hp" aria-hidden="true"><label>Website <input type="text" id="website" tabindex="-1" autocomplete="off"></label></div>
       <button type="submit" class="submit" id="submitBtn">Kirim Pendaftaran 🚀</button>

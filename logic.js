@@ -1,8 +1,10 @@
-/* Logika murni (tanpa DOM) — bisa dites di Node: test/logic.test.js */
+/* Logika murni (tanpa DOM) — dites di Node: test/run-tests.js */
 (function (root) {
   'use strict';
 
   var PHONE_RE = /^(\+62|62|0)8[1-9][0-9]{6,11}$/;
+  var BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+  var HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
   function rupiah(n) {
     return 'Rp' + Math.round(Number(n) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -21,27 +23,24 @@
     return null;
   }
 
-  /** state: { aktivitas, subIdx, mpIdx, jumlahPeserta, addons:{key:qty} } */
+  /** Tanggal jadwal yang belum lewat (todayIso = 'YYYY-MM-DD'). */
+  function upcomingDates(akt, todayIso) {
+    if (!akt || !akt.jadwal) return [];
+    return akt.jadwal.filter(function (d) { return d >= todayIso; }).sort();
+  }
+
+  /** state: { aktivitas, mpIdx, jumlahPeserta } */
   function computeTotals(state, cfg) {
     var akt = findAktivitas(cfg, state.aktivitas);
-    var sub = akt && state.subIdx >= 0 ? akt.sub[state.subIdx] : null;
-    var hargaPerOrang = sub && state.mpIdx >= 0 ? sub.harga[state.mpIdx] : 0;
+    var hargaPerOrang = akt && state.mpIdx >= 0 ? akt.harga[state.mpIdx] : 0;
     var jumlah = Math.max(1, Number(state.jumlahPeserta) || 1);
-    var totalAktivitas = hargaPerOrang * jumlah;
-    var totalAddons = 0;
-    (cfg.ADDONS || []).forEach(function (a) {
-      totalAddons += a.harga * (Number((state.addons || {})[a.key]) || 0);
-    });
-    var total = totalAktivitas + totalAddons;
+    var total = hargaPerOrang * jumlah;
     var dp = Math.ceil(total * (cfg.DP_PERSEN || 50) / 100);
     return {
       aktivitasLabel: akt ? akt.label : '',
-      subNama: sub ? sub.nama : '',
       meetingPoint: akt && state.mpIdx >= 0 ? akt.meetingPoints[state.mpIdx] : '',
       hargaPerOrang: hargaPerOrang,
       jumlah: jumlah,
-      totalAktivitas: totalAktivitas,
-      totalAddons: totalAddons,
       total: total,
       dp: dp,
     };
@@ -60,12 +59,13 @@
     if (!String(s.namaDarurat || '').trim()) e.namaDarurat = 'Nama kontak darurat wajib diisi';
     if (!String(s.noWADarurat || '').trim()) e.noWADarurat = 'Nomor WA darurat wajib diisi';
     else if (!isValidPhone(s.noWADarurat)) e.noWADarurat = 'Format nomor WA tidak valid';
-    if (!s.aktivitas) e.aktivitas = 'Pilih aktivitas terlebih dahulu';
-    else {
-      if (!(s.subIdx >= 0)) e.subIdx = 'Pilih lokasi / sub-aktivitas';
-      if (!(s.mpIdx >= 0)) e.mpIdx = 'Pilih meeting point';
+    if (!s.aktivitas) e.aktivitas = 'Pilih trip terlebih dahulu';
+    else if (!(s.mpIdx >= 0)) e.mpIdx = 'Pilih meeting point';
+    if (!s.tanggalTrip) e.tanggalTrip = 'Pilih tanggal trip';
+    else if (s.aktivitas) {
+      var akt = findAktivitas(cfg, s.aktivitas);
+      if (akt && akt.jadwal && akt.jadwal.length && akt.jadwal.indexOf(s.tanggalTrip) === -1) e.tanggalTrip = 'Tanggal tidak ada di jadwal trip ini';
     }
-    if (!s.tanggalTrip) e.tanggalTrip = 'Tanggal trip wajib diisi';
     (s.pesertaTambahan || []).forEach(function (p, i) {
       if (!String(p.nama || '').trim()) e['p' + i + '_nama'] = 'Nama wajib diisi';
       if (!p.gender) e['p' + i + '_gender'] = 'Pilih jenis kelamin';
@@ -87,7 +87,6 @@
       namaDarurat: String(s.namaDarurat).trim(),
       noWADarurat: cleanPhone(s.noWADarurat),
       aktivitas: t.aktivitasLabel,
-      subAktivitas: t.subNama,
       meetingPoint: t.meetingPoint,
       tanggalTrip: s.tanggalTrip,
       jumlahPeserta: t.jumlah,
@@ -95,8 +94,6 @@
         return { nama: String(p.nama).trim(), gender: p.gender, usia: String(p.usia).trim(), noWA: cleanPhone(p.noWA) };
       }),
       catatanKesehatan: String(s.catatanKesehatan || '').trim(),
-      trekkingPoleQty: Number((s.addons || {}).trekkingPole) || 0,
-      droneQty: Number((s.addons || {}).drone) || 0,
       hargaPerOrang: t.hargaPerOrang,
       totalHarga: t.total,
       dpMinimal: t.dp,
@@ -109,21 +106,18 @@
 
   function formatTanggal(iso) {
     if (!iso) return '';
-    var bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-    var hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
     var p = iso.split('-');
     var d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
-    return hari[d.getDay()] + ', ' + d.getDate() + ' ' + bulan[d.getMonth()] + ' ' + d.getFullYear();
+    return HARI[d.getDay()] + ', ' + d.getDate() + ' ' + BULAN[d.getMonth()] + ' ' + d.getFullYear();
   }
 
   function buildWaMessage(p, id) {
-    var m = '*PENDAFTARAN TRIP ADVENTURE*\n*Travelmates Indonesia*\n\n';
+    var m = '*PENDAFTARAN OPEN TRIP*\n*Travelmates Indonesia*\n\n';
     if (id) m += 'ID Registrasi: *' + id + '*\n\n';
     m += 'Nama: ' + p.namaLengkap + '\n';
     m += 'No WhatsApp: ' + p.noWA + '\n';
     m += 'Kontak Darurat: ' + p.namaDarurat + ' (' + p.noWADarurat + ')\n\n';
-    m += 'Aktivitas: ' + p.aktivitas + '\n';
-    m += 'Lokasi: ' + p.subAktivitas + '\n';
+    m += 'Trip: ' + p.aktivitas + '\n';
     m += 'Meeting Point: ' + p.meetingPoint + '\n';
     m += 'Tanggal: ' + formatTanggal(p.tanggalTrip) + '\n';
     m += 'Jumlah Peserta: ' + p.jumlahPeserta + ' orang\n\n';
@@ -132,11 +126,6 @@
     p.pesertaTambahan.forEach(function (x, i) {
       m += (i + 2) + '. ' + x.nama + ' | ' + x.gender + ' | ' + x.usia + ' th' + (x.noWA ? ' | ' + x.noWA : '') + '\n';
     });
-    if (p.trekkingPoleQty || p.droneQty) {
-      m += '\n*Add-ons:*\n';
-      if (p.trekkingPoleQty) m += '- Trekking Pole: ' + p.trekkingPoleQty + ' pcs\n';
-      if (p.droneQty) m += '- Drone: ' + p.droneQty + ' unit\n';
-    }
     if (p.catatanKesehatan) m += '\nCatatan kesehatan: ' + p.catatanKesehatan + '\n';
     m += '\n*Total Harga: ' + rupiah(p.totalHarga) + '*\n';
     m += '*DP Minimal: ' + rupiah(p.dpMinimal) + '*\n';
@@ -147,7 +136,7 @@
 
   var api = {
     rupiah: rupiah, cleanPhone: cleanPhone, isValidPhone: isValidPhone, findAktivitas: findAktivitas,
-    computeTotals: computeTotals, validate: validate, buildPayload: buildPayload,
+    upcomingDates: upcomingDates, computeTotals: computeTotals, validate: validate, buildPayload: buildPayload,
     buildWaMessage: buildWaMessage, formatTanggal: formatTanggal,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

@@ -5,9 +5,10 @@
   var $ = function (id) { return document.getElementById(id); };
 
   var state = {
-    aktivitas: '', subIdx: -1, mpIdx: -1, jumlahPeserta: 1,
-    pesertaTambahan: [], addons: {}, setuju: false,
+    aktivitas: '', mpIdx: -1, tanggalTrip: '', jumlahPeserta: 1,
+    pesertaTambahan: [], setuju: false,
   };
+  function todayIso() { var t = new Date(); t.setMinutes(t.getMinutes() - t.getTimezoneOffset()); return t.toISOString().slice(0, 10); }
   var buktiFile = null;
   var sending = false;
 
@@ -41,7 +42,7 @@
       b.appendChild(el('div', { class: 't' }, a.label));
       if (a.badge) b.appendChild(el('div', { class: 'b' }, a.badge));
       b.addEventListener('click', function () {
-        state.aktivitas = a.key; state.subIdx = -1; state.mpIdx = -1;
+        state.aktivitas = a.key; state.mpIdx = a.meetingPoints.length === 1 ? 0 : -1; state.tanggalTrip = '';
         setErr('aktivitas', ''); renderActs(); renderSubs(); update();
       });
       box.appendChild(b);
@@ -52,24 +53,23 @@
     var a = L.findAktivitas(C, state.aktivitas);
     $('subWrap').hidden = !a;
     if (!a) return;
-    var subs = $('subs'); subs.textContent = '';
-    a.sub.forEach(function (s, i) {
-      var min = Math.min.apply(null, s.harga);
-      var b = el('button', { type: 'button', class: 'opt', 'aria-pressed': String(state.subIdx === i) });
-      b.appendChild(el('span', null, s.nama));
-      b.appendChild(el('span', { class: 'p' }, 'mulai ' + L.rupiah(min)));
-      b.addEventListener('click', function () { state.subIdx = i; setErr('subIdx', ''); renderSubs(); update(); });
-      subs.appendChild(b);
-    });
     var mps = $('mps'); mps.textContent = '';
     a.meetingPoints.forEach(function (mp, i) {
-      var price = state.subIdx >= 0 ? L.rupiah(a.sub[state.subIdx].harga[i]) + '/org' : '';
       var b = el('button', { type: 'button', class: 'opt', 'aria-pressed': String(state.mpIdx === i) });
       b.appendChild(el('span', null, '📍 ' + mp));
-      b.appendChild(el('span', { class: 'p' }, price));
+      b.appendChild(el('span', { class: 'p' }, L.rupiah(a.harga[i]) + '/org'));
       b.addEventListener('click', function () { state.mpIdx = i; setErr('mpIdx', ''); renderSubs(); update(); });
       mps.appendChild(b);
     });
+    var sel = $('tanggalTrip'); sel.textContent = '';
+    var dates = L.upcomingDates(a, todayIso());
+    sel.appendChild(el('option', { value: '' }, dates.length ? 'Pilih tanggal' : 'Belum ada jadwal — hubungi admin'));
+    dates.forEach(function (d) {
+      var o = el('option', { value: d }, L.formatTanggal(d));
+      if (d === state.tanggalTrip) o.selected = true;
+      sel.appendChild(o);
+    });
+    $('tripNote').textContent = a.catatan || '';
   }
 
   /* ---------- peserta ---------- */
@@ -121,35 +121,12 @@
     return f;
   }
 
-  /* ---------- add-ons ---------- */
-  function renderAddons() {
-    var box = $('addons'); box.textContent = '';
-    C.ADDONS.forEach(function (a) {
-      state.addons[a.key] = state.addons[a.key] || 0;
-      var row = el('div', { class: 'addon' });
-      var info = el('div'); info.appendChild(el('b', null, a.label)); info.appendChild(el('small', null, L.rupiah(a.harga) + ' / ' + a.satuan));
-      var st = el('div', { class: 'stepper' });
-      var minus = el('button', { type: 'button', 'aria-label': 'Kurangi ' + a.label }, '−');
-      var out = el('output', null, String(state.addons[a.key]));
-      var plus = el('button', { type: 'button', 'aria-label': 'Tambah ' + a.label }, '+');
-      function refresh() { out.textContent = state.addons[a.key]; minus.disabled = state.addons[a.key] <= 0; update(); }
-      minus.addEventListener('click', function () { state.addons[a.key] = Math.max(0, state.addons[a.key] - 1); refresh(); });
-      plus.addEventListener('click', function () { state.addons[a.key] = Math.min(20, state.addons[a.key] + 1); refresh(); });
-      minus.disabled = true;
-      st.appendChild(minus); st.appendChild(out); st.appendChild(plus);
-      row.appendChild(info); row.appendChild(st);
-      box.appendChild(row);
-    });
-  }
-
   /* ---------- ringkasan ---------- */
   function update() {
     var t = L.computeTotals(state, C);
     var has = t.hargaPerOrang > 0;
     $('sHarga').textContent = has ? L.rupiah(t.hargaPerOrang) : '—';
     $('sJumlah').textContent = t.jumlah + ' orang';
-    $('sAkt').textContent = has ? L.rupiah(t.totalAktivitas) : '—';
-    $('sAdd').textContent = L.rupiah(t.totalAddons);
     $('sTotal').textContent = t.total ? L.rupiah(t.total) : '—';
     $('sDp').textContent = t.total ? L.rupiah(t.dp) : '—';
     return t;
@@ -273,13 +250,12 @@
 
   /* ---------- init ---------- */
   function init() {
-    renderActs(); renderSubs(); renderAddons(); syncPeserta(); update();
+    renderActs(); renderSubs(); syncPeserta(); update();
 
     $('pMinus').addEventListener('click', function () { if (state.jumlahPeserta > 1) { state.jumlahPeserta--; syncPeserta(); update(); } });
     $('pPlus').addEventListener('click', function () { if (state.jumlahPeserta < C.MAX_PESERTA) { state.jumlahPeserta++; syncPeserta(); update(); } });
 
-    var today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-    $('tanggalTrip').min = today.toISOString().slice(0, 10);
+    $('tanggalTrip').addEventListener('change', function () { state.tanggalTrip = this.value; });
 
     $('bankName').textContent = C.BANK.bank;
     $('bankNo').textContent = C.BANK.nomor;
@@ -287,7 +263,7 @@
     $('sDpLabel').textContent = 'DP Minimal (' + C.DP_PERSEN + '%)';
     $('copyBtn').addEventListener('click', function () {
       var done = function () { $('copyBtn').textContent = 'Tersalin ✓'; setTimeout(function () { $('copyBtn').textContent = 'Salin'; }, 1800); };
-      if (navigator.clipboard) navigator.clipboard.writeText(C.BANK.nomor).then(done, done); else done();
+      if (navigator.clipboard) navigator.clipboard.writeText(C.BANK.nomor.replace(/\s/g, '')).then(done, done); else done();
     });
     var rules = ['⚠️ Minimal DP ' + C.DP_PERSEN + '% dari total harga', '📅 Reschedule maks H-2, info ke admin', '❌ DP hangus jika cancel', '✅ Pastikan nama rekening sesuai sebelum transfer'];
     rules.forEach(function (r) { $('rules').appendChild(el('li', null, r)); });
