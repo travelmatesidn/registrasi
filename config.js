@@ -13,6 +13,9 @@ window.TM_CONFIG = {
 
   DP_PERSEN: 50,
 
+  // Setelah pendaftaran sukses, otomatis pindah ke WhatsApp admin setelah sekian detik
+  WA_REDIRECT_DETIK: 3,
+
   /* Daftar trip — Open Trip Desember 2026
      - meetingPoints & harga: urutannya sama (harga[0] = meetingPoints[0], dst.)
      - jadwal: tanggal trip (YYYY-MM-DD). Tanggal yang sudah lewat otomatis disembunyikan. */

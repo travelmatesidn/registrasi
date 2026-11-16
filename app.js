@@ -234,11 +234,20 @@
       }).then(function (r) { clearTimeout(timer); return r.json(); }).then(function (res) {
         if (!res || !res.ok) throw new Error((res && res.error) || 'Server tidak merespons dengan benar.');
         var msg = L.buildWaMessage(payload, res.id);
+        var url = waUrl(msg);
         $('regId').textContent = res.id;
-        $('waBtn').href = waUrl(msg);
+        $('waBtn').href = url;
         $('form').style.display = 'none';
         $('success').classList.add('show');
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Otomatis pindah ke WhatsApp (pindah halaman tidak diblokir browser, beda dengan pop-up).
+        var detik = C.WA_REDIRECT_DETIK || 3;
+        var tick = function () {
+          $('countdown').textContent = detik;
+          if (detik <= 0) { window.location.href = url; return; }
+          detik--; setTimeout(tick, 1000);
+        };
+        tick();
       });
     }).catch(function (err) {
       var reason = err && err.name === 'AbortError' ? 'Koneksi terlalu lama.' : (err && err.message) || 'Terjadi kesalahan.';
