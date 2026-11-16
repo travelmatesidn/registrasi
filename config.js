@@ -4,7 +4,7 @@
    ========================================================= */
 window.TM_CONFIG = {
   // URL Web App dari Google Apps Script (lihat PANDUAN_SETUP.md langkah 3)
-  APPS_SCRIPT_URL: '',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzZHU1rejBPHSG3JLQ47AKo4itP6kXQbtQGPT8YhxgiVLn5Cn-w-u2xXyphAeVZL7ud/exec',
 
   // Nomor WhatsApp admin (format 62..., tanpa + dan tanpa spasi)
   WA_ADMIN: '6282125445322',
