@@ -1,6 +1,6 @@
 /* =========================================================
    KONFIGURASI FORM REGISTRASI — Travelmates Indonesia
-   Edit file ini saja untuk ganti trip, jadwal, harga, rekening, dll.
+   Edit file ini saja untuk ganti trip, harga, rekening, dll.
    ========================================================= */
 window.TM_CONFIG = {
   // URL Web App dari Google Apps Script (lihat PANDUAN_SETUP.md langkah 3)
@@ -16,42 +16,34 @@ window.TM_CONFIG = {
   // Setelah pendaftaran sukses, otomatis pindah ke WhatsApp admin setelah sekian detik
   WA_REDIRECT_DETIK: 3,
 
-  /* Daftar trip — Open Trip Desember 2026
+  /* Daftar trip
      - meetingPoints & harga: urutannya sama (harga[0] = meetingPoints[0], dst.)
-     - jadwal: tanggal trip (YYYY-MM-DD). Tanggal yang sudah lewat otomatis disembunyikan. */
+     - badge: label kecil di kartu trip (isi null kalau tidak perlu) */
   AKTIVITAS: [
     {
       key: 'canyoning-sentul', label: 'Canyoning Sentul', emoji: '🧗', badge: '🔥 Paling diminati',
       meetingPoints: ['Basecamp', 'UKI', 'Hotel Ambarossa Bekasi', 'Stasiun Bogor'],
       harga: [295000, 420000, 420000, 395000],
-      jadwal: ['2026-12-02', '2026-12-05', '2026-12-06', '2026-12-09', '2026-12-12', '2026-12-13', '2026-12-16',
-               '2026-12-19', '2026-12-20', '2026-12-23', '2026-12-26', '2026-12-27', '2026-12-30'],
     },
     {
       key: 'gunung-papandayan', label: 'Gunung Papandayan', emoji: '⛰️', badge: null,
       meetingPoints: ['Basecamp', 'UKI', 'Hotel Ambarossa Bekasi', 'Stasiun Bogor'],
       harga: [200000, 365000, 365000, 365000],
-      jadwal: ['2026-12-05', '2026-12-06', '2026-12-19', '2026-12-20', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-27'],
     },
     {
-      key: 'rafting-cisadane', label: 'Rafting Cisadane', emoji: '🚣', badge: null,
+      key: 'rafting-cisadane', label: 'Rafting Cisadane', emoji: '🚣', badge: '🔥 Paling diminati',
       meetingPoints: ['Basecamp', 'Stasiun Bogor'],
       harga: [250000, 280000],
-      jadwal: ['2026-12-05', '2026-12-06', '2026-12-10', '2026-12-12', '2026-12-13', '2026-12-17', '2026-12-19',
-               '2026-12-20', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-27'],
-      catatan: 'Ada Open Trip Spesial Liburan selama libur sekolah — tanggal lain tanya admin.',
     },
     {
       key: 'trekking-cisadon', label: 'Trekking Cisadon', emoji: '🥾', badge: null,
       meetingPoints: ['Stasiun Bogor'],
       harga: [125000],
-      jadwal: ['2026-12-12', '2026-12-13', '2026-12-19', '2026-12-20', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-27'],
     },
     {
       key: 'curug-cibeureum', label: 'Trekking Curug Cibeureum', emoji: '💦', badge: null,
       meetingPoints: ['Basecamp', 'Stasiun Bogor'],
       harga: [155000, 270000],
-      jadwal: ['2026-12-12', '2026-12-13', '2026-12-19', '2026-12-20', '2026-12-24', '2026-12-25', '2026-12-26', '2026-12-27'],
     },
   ],
 

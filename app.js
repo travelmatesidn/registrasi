@@ -8,7 +8,6 @@
     aktivitas: '', mpIdx: -1, tanggalTrip: '', jumlahPeserta: 1,
     pesertaTambahan: [], setuju: false,
   };
-  function todayIso() { var t = new Date(); t.setMinutes(t.getMinutes() - t.getTimezoneOffset()); return t.toISOString().slice(0, 10); }
   var buktiFile = null;
   var sending = false;
 
@@ -42,7 +41,7 @@
       b.appendChild(el('div', { class: 't' }, a.label));
       if (a.badge) b.appendChild(el('div', { class: 'b' }, a.badge));
       b.addEventListener('click', function () {
-        state.aktivitas = a.key; state.mpIdx = a.meetingPoints.length === 1 ? 0 : -1; state.tanggalTrip = '';
+        state.aktivitas = a.key; state.mpIdx = a.meetingPoints.length === 1 ? 0 : -1;
         setErr('aktivitas', ''); renderActs(); renderSubs(); update();
       });
       box.appendChild(b);
@@ -61,15 +60,6 @@
       b.addEventListener('click', function () { state.mpIdx = i; setErr('mpIdx', ''); renderSubs(); update(); });
       mps.appendChild(b);
     });
-    var sel = $('tanggalTrip'); sel.textContent = '';
-    var dates = L.upcomingDates(a, todayIso());
-    sel.appendChild(el('option', { value: '' }, dates.length ? 'Pilih tanggal' : 'Belum ada jadwal — hubungi admin'));
-    dates.forEach(function (d) {
-      var o = el('option', { value: d }, L.formatTanggal(d));
-      if (d === state.tanggalTrip) o.selected = true;
-      sel.appendChild(o);
-    });
-    $('tripNote').textContent = a.catatan || '';
   }
 
   /* ---------- peserta ---------- */
@@ -264,6 +254,8 @@
     $('pMinus').addEventListener('click', function () { if (state.jumlahPeserta > 1) { state.jumlahPeserta--; syncPeserta(); update(); } });
     $('pPlus').addEventListener('click', function () { if (state.jumlahPeserta < C.MAX_PESERTA) { state.jumlahPeserta++; syncPeserta(); update(); } });
 
+    // Kalender: mulai hari ini (sesuai tanggal di HP pendaftar), tanpa batas ke depan
+    $('tanggalTrip').min = L.todayIso();
     $('tanggalTrip').addEventListener('change', function () { state.tanggalTrip = this.value; });
 
     $('bankName').textContent = C.BANK.bank;

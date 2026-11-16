@@ -23,12 +23,6 @@
     return null;
   }
 
-  /** Tanggal jadwal yang belum lewat (todayIso = 'YYYY-MM-DD'). */
-  function upcomingDates(akt, todayIso) {
-    if (!akt || !akt.jadwal) return [];
-    return akt.jadwal.filter(function (d) { return d >= todayIso; }).sort();
-  }
-
   /** state: { aktivitas, mpIdx, jumlahPeserta } */
   function computeTotals(state, cfg) {
     var akt = findAktivitas(cfg, state.aktivitas);
@@ -47,8 +41,15 @@
   }
 
   /** Return object { field: pesan } — kosong berarti valid. */
-  function validate(s, cfg, hasFile) {
+  /** Tanggal hari ini (zona waktu perangkat) dalam format YYYY-MM-DD. */
+  function todayIso() {
+    var t = new Date();
+    return t.getFullYear() + '-' + ('0' + (t.getMonth() + 1)).slice(-2) + '-' + ('0' + t.getDate()).slice(-2);
+  }
+
+  function validate(s, cfg, hasFile, today) {
     var e = {};
+    today = today || todayIso();
     if (!String(s.namaLengkap || '').trim()) e.namaLengkap = 'Nama lengkap wajib diisi';
     if (!String(s.noWA || '').trim()) e.noWA = 'Nomor WhatsApp wajib diisi';
     else if (!isValidPhone(s.noWA)) e.noWA = 'Format nomor WA tidak valid (contoh: 08123456789)';
@@ -62,10 +63,8 @@
     if (!s.aktivitas) e.aktivitas = 'Pilih trip terlebih dahulu';
     else if (!(s.mpIdx >= 0)) e.mpIdx = 'Pilih meeting point';
     if (!s.tanggalTrip) e.tanggalTrip = 'Pilih tanggal trip';
-    else if (s.aktivitas) {
-      var akt = findAktivitas(cfg, s.aktivitas);
-      if (akt && akt.jadwal && akt.jadwal.length && akt.jadwal.indexOf(s.tanggalTrip) === -1) e.tanggalTrip = 'Tanggal tidak ada di jadwal trip ini';
-    }
+    else if (!/^\d{4}-\d{2}-\d{2}$/.test(s.tanggalTrip)) e.tanggalTrip = 'Format tanggal tidak valid';
+    else if (s.tanggalTrip < today) e.tanggalTrip = 'Tanggal trip tidak boleh sebelum hari ini';
     (s.pesertaTambahan || []).forEach(function (p, i) {
       if (!String(p.nama || '').trim()) e['p' + i + '_nama'] = 'Nama wajib diisi';
       if (!p.gender) e['p' + i + '_gender'] = 'Pilih jenis kelamin';
@@ -136,7 +135,7 @@
 
   var api = {
     rupiah: rupiah, cleanPhone: cleanPhone, isValidPhone: isValidPhone, findAktivitas: findAktivitas,
-    upcomingDates: upcomingDates, computeTotals: computeTotals, validate: validate, buildPayload: buildPayload,
+    todayIso: todayIso, computeTotals: computeTotals, validate: validate, buildPayload: buildPayload,
     buildWaMessage: buildWaMessage, formatTanggal: formatTanggal,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
